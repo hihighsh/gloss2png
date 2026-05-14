@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Gloss HTML → PNG</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #d1d5db;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    header {
+      padding: 20px 28px 10px;
+    }
+    h1 { margin: 0 0 6px; font-size: 24px; }
+    p { margin: 0; color: var(--muted); }
+    .app {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 18px;
+      padding: 18px 28px 28px;
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,.05);
+    }
+    label { display: block; font-weight: 700; margin: 12px 0 6px; }
+    textarea {
+      width: 100%; height: 420px; resize: vertical;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 13px; line-height: 1.5;
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px;
+    }
+    .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    input[type="number"] {
+      width: 95px; padding: 8px;
+      border: 1px solid var(--border); border-radius: 8px;
+    }
+    button {
+      border: 0; border-radius: 10px;
+      padding: 10px 14px;
+      background: #111827; color: white;
+      font-weight: 700; cursor: pointer;
+    }
+    button.secondary { background: #4b5563; }
+    button:hover { opacity: .92; }
+    .hint { font-size: 12px; color: var(--muted); margin-top: 8px; }
+    .preview-wrap { overflow: auto; }
+
+    /* ここから下がPNG化される領域 */
+    #capture {
+      display: inline-block;
+      background: white;
+      padding: 32px 36px;
+      min-width: 900px;
+      color: black;
+    }
+    .example {
+      font-family: "Charis SIL", "Gentium Plus", "Noto Serif", "Times New Roman", serif;
+      font-size: 25px;
+      line-height: 1.35;
+      margin-bottom: 22px;
+    }
+    .exno { font-size: 26px; margin-bottom: 18px; }
+    .words {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      padding-bottom: 8px;
+      white-space: nowrap;
+    }
+    .word {
+      padding: 0 16px 0 16px;
+    }
+    .word:first-child { padding-left: 0; }
+    .word:last-child { border-right: 0; }
+    .obj { font-style: italic; margin-bottom: 5px; }
+    .gloss { font-size: 18px; }
+    .sc {
+      font-variant-caps: small-caps;
+      font-variant: small-caps;
+      letter-spacing: .035em;
+    }
+    .trans {
+      margin-top: 22px;
+      font-size: 25px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Gloss HTML → PNG</h1>
+    <p>左にHTMLを貼る → 右で確認 → PNGを書き出し。編集用はHTML、貼付用はPNGとして使えます。</p>
+  </header>
+
+  <main class="app">
+    <section class="panel">
+      <label for="htmlInput">グロスHTML</label>
+      <textarea id="htmlInput"><div class="example">
+  <div class="exno">(1)</div>
+  <div class="words">
+    <div class="word"><div class="obj">oxirgi</div><div class="gloss">final</div></div>
+    <div class="word"><div class="obj">anaqalar</div><div class="gloss">anaqa-<span class="sc">pl</span></div></div>
+    <div class="word"><div class="obj">qol-gan</div><div class="gloss">remain-<span class="sc">prf</span></div></div>
+    <div class="word"><div class="obj">men-da</div><div class="gloss">1<span class="sc">sg</span>-<span class="sc">loc</span></div></div>
+    <div class="word"><div class="obj">ham</div><div class="gloss">also</div></div>
+    <div class="word"><div class="obj">shu</div><div class="gloss">that</div></div>
+    <div class="word"><div class="obj">A-ga</div><div class="gloss"><span class="sc">pv-dat</span></div></div>
+    <div class="word"><div class="obj">o’xsha-b</div><div class="gloss">be.similar-<span class="sc">cvb.seq</span></div></div>
+    <div class="word"><div class="obj">shu</div><div class="gloss">this</div></div>
+    <div class="word"><div class="obj">anaqa-ni</div><div class="gloss">anaqa-<span class="sc">acc</span></div></div>
+    <div class="word"><div class="obj">mavzu-ni</div><div class="gloss">theme-<span class="sc">acc</span></div></div>
+    <div class="word"><div class="obj">ulash-ish</div><div class="gloss">share-<span class="sc">vn</span></div></div>
+    <div class="word"><div class="obj">mumkin</div><div class="gloss">possible</div></div>
+    <div class="word"><div class="obj">deb</div><div class="gloss"><span class="sc">qt</span></div></div>
+    <div class="word"><div class="obj">o’yla-y=man</div><div class="gloss">think-<span class="sc">npst</span>=1<span class="sc">sg</span></div></div>
+  </div>
+  <div class="trans">このあれを、テーマを共有できると思います</div>
+</div></textarea>
+
+      <div class="row" style="margin-top: 12px;">
+        <button id="renderBtn" type="button">プレビュー更新</button>
+        <button id="downloadBtn" class="secondary" type="button">PNGを書き出し</button>
+      </div>
+
+      <label>出力倍率</label>
+      <div class="row">
+        <input id="scale" type="number" min="1" max="4" step="0.5" value="2" />
+        <span class="hint">PowerPoint用なら2〜3がおすすめ</span>
+      </div>
+      <div class="hint">`.sc` で囲んだ部分だけスモールキャピタルになります。</div>
+    </section>
+
+    <section class="panel preview-wrap">
+      <div id="capture"></div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script>
+    const htmlInput = document.getElementById('htmlInput');
+    const capture = document.getElementById('capture');
+    const renderBtn = document.getElementById('renderBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const scaleInput = document.getElementById('scale');
+
+    function render() {
+      capture.innerHTML = htmlInput.value;
+    }
+
+    async function downloadPNG() {
+      render();
+      await document.fonts.ready;
+      const scale = Number(scaleInput.value || 2);
+      const canvas = await html2canvas(capture, {
+        backgroundColor: '#ffffff',
+        scale,
+        useCORS: true
+      });
+      const link = document.createElement('a');
+      link.download = 'gloss-example.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    renderBtn.addEventListener('click', render);
+    downloadBtn.addEventListener('click', downloadPNG);
+    htmlInput.addEventListener('input', render);
+    render();
+  </script>
+</body>
+</html>
