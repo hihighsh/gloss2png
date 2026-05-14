@@ -109,7 +109,16 @@
 
   <main class="app">
     <section class="panel">
-      <label for="htmlInput">グロスHTML</label>
+      <label for="tsvInput">TSV貼り付け（Spreadsheetからコピー可）</label>
+      <textarea id="tsvInput" style="height:180px; margin-bottom:12px;">oxirgi	anaqalar	qol-gan	men-da
+final	anaqa-pl	remain-prf	1sg-loc
+このあれを、テーマを共有できると思います</textarea>
+
+      <div class="row" style="margin-bottom:14px;">
+        <button id="generateBtn" type="button">TSVからHTML生成</button>
+      </div>
+
+      <label for="htmlInput">生成されたグロスHTML</label>
       <textarea id="htmlInput"><div class="example">
   <div class="exno">(1)</div>
   <div class="words">
@@ -152,11 +161,66 @@
 
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <script>
+    const tsvInput = document.getElementById('tsvInput');
+    const generateBtn = document.getElementById('generateBtn');
     const htmlInput = document.getElementById('htmlInput');
     const capture = document.getElementById('capture');
     const renderBtn = document.getElementById('renderBtn');
     const downloadBtn = document.getElementById('downloadBtn');
     const scaleInput = document.getElementById('scale');
+
+    const ABBRS = [
+      'acc','dat','loc','abl','all','gen','ins',
+      'pl','sg','du',
+      'pst','npst','prs','fut','prf','ipfv','pfv',
+      'vn','cvb','qt','ptcp','pass','caus','refl'
+    ];
+
+    function smallCapsGloss(text) {
+      return text.replace(/([A-Za-z0-9.]+)/g, (m) => {
+        const lower = m.toLowerCase();
+        if (ABBRS.includes(lower)) {
+          return `<span class="sc">${lower}</span>`;
+        }
+        return m;
+      });
+    }
+
+    function generateHTMLFromTSV() {
+      const lines = tsvInput.value
+        .split(/
+/)
+        .map(l => l.trim())
+        .filter(Boolean);
+
+      if (lines.length < 3) return;
+
+      const obj = lines[0].split(/	+/);
+      const gloss = lines[1].split(/	+/);
+      const trans = lines.slice(2).join(' ');
+
+      let html = `<div class="example">`;
+      html += `<div class="exno">(1)</div>`;
+      html += `<div class="words">`;
+
+      for (let i = 0; i < obj.length; i++) {
+        const o = obj[i] || '';
+        const g = smallCapsGloss(gloss[i] || '');
+
+        html += `
+          <div class="word">
+            <div class="obj">${o}</div>
+            <div class="gloss">${g}</div>
+          </div>`;
+      }
+
+      html += `</div>`;
+      html += `<div class="trans">${trans}</div>`;
+      html += `</div>`;
+
+      htmlInput.value = html;
+      generateHTMLFromTSV();
+    }
 
     function render() {
       capture.innerHTML = htmlInput.value;
@@ -177,6 +241,7 @@
       link.click();
     }
 
+    generateBtn.addEventListener('click', generateHTMLFromTSV);
     renderBtn.addEventListener('click', render);
     downloadBtn.addEventListener('click', downloadPNG);
     htmlInput.addEventListener('input', render);
